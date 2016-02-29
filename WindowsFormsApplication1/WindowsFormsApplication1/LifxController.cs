@@ -112,7 +112,7 @@ namespace LIFXController
             {
                 try
                 {
-                    bytes = sock.Receive(buf, buf.Length, 0);
+                    //bytes = sock.Receive(buf, buf.Length, 0);
                 }
                 catch(Exception e)
                 {
@@ -202,7 +202,7 @@ namespace LIFXController
 
         private void OffButton_Click(object sender, EventArgs e)
         {
-            LifxMessage power = new LifxLightSetPowerMessage(lightbulbs[0].address, false, false, (UInt32)Convert.ToInt32(this.transitionTime.Text), false);
+            LifxMessage power = new LifxLightSetPowerMessage(lightbulbs[0].address, false, false, (UInt32)Convert.ToInt32("0"), false);
             byte[] hdr = power.header.PacketSerialize();
             byte[] body = power.BodySerialize();
             byte[] message = new byte[hdr.Length + body.Length];
@@ -213,7 +213,7 @@ namespace LIFXController
 
         private void OnButton_Click(object sender, EventArgs e)
         {
-            LifxMessage power = new LifxLightSetPowerMessage(lightbulbs[0].address, false, false, (UInt32)Convert.ToInt32(this.transitionTime.Text), true);
+            LifxMessage power = new LifxLightSetPowerMessage(lightbulbs[0].address, false, false, (UInt32)Convert.ToInt32("0"), true);
             byte[] hdr = power.header.PacketSerialize();
             byte[] body = power.BodySerialize();
             byte[] message = new byte[hdr.Length + body.Length];
@@ -237,7 +237,7 @@ namespace LIFXController
             hsbk.saturation = hsv.s;
             hsbk.brightness = hsv.v;
             hsbk.kelvin = 10000;
-            LifxMessage color = new LifxLightSetColorMessage(lightbulbs[0].address, false, false, hsbk, (UInt32)Convert.ToInt32(this.transitionTime.Text));
+            LifxMessage color = new LifxLightSetColorMessage(lightbulbs[0].address, false, false, hsbk, (UInt32)Convert.ToInt32("0"));
             byte[] hdr = color.header.PacketSerialize();
             byte[] body = color.BodySerialize();
             byte[] message = new byte[hdr.Length + body.Length];
@@ -254,6 +254,47 @@ namespace LIFXController
             Array.Copy(hdr, buffer, hdr.Length);
             Array.Copy(body, 0, buffer, hdr.Length, body.Length);
             sock.SendTo(buffer, bcastep);
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var confirmation_box_result = MessageBox.Show("This will clear all entries.", 
+                "Clear Entries", 
+                MessageBoxButtons.OKCancel);
+
+            if (confirmation_box_result == DialogResult.OK)
+            {
+                while (actionsList.Items.Count > 0)
+                {
+                    actionsList.Items.Remove(actionsList.Items[0]);
+                }
+            }
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var open_result = openFileDialog.ShowDialog();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var save_results = saveFileDialog.ShowDialog();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var save_box_result = MessageBox.Show("Do you want to save your changes?",
+                "Save?",
+                MessageBoxButtons.YesNoCancel);
+
+            if (save_box_result == DialogResult.Yes)
+            {
+
+            }
+            else if (save_box_result == DialogResult.No)
+            {
+
+            }
         }
     }
 }
